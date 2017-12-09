@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <link href="../node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+  <link href="../node_modules/bulma/css/bulma.css" rel="stylesheet">
+
+  <style>
+    .container {
+      padding: 10px;
+    }
+
+    .dropzone {
+      display: flex;
+      justify-content: center;
+      min-height: 500px;
+      /*min-width: 500px;
+      width: 100%;
+      height: 100%;*/
+      overflow: auto;
+      border: 1px dashed hsl(0, 0%, 21%);
+      flex-direction: column;
+    }
+
+    .dz-message {
+      align-self: center;
+    }
+
+    .bg-hover {
+      background-color:  hsl(0, 0%, 96%);
+    }
+
+    #progress {
+      padding: 5px;
+    }
+
+  </style>
+</head>
+
+<body class="has-text-grey-dark">
+  <section id="preview" class="section is-hidden"></section>
+  <section id="notification" class="section is-hidden is-paddingless">
+    <div class="notification is-danger is-radiusless">
+      <p id="alert" class="has-text-centered"></p>
+    </div>
+  </section>
+  <div class="columns container">
+    <!-- form for upload setting -->
+    <div class="column">
+      <form class="form">
+        <!-- start Quality -->
+        <h2>Settings</h2>
+        <div class="field is-horizontal">
+          <div class="field-label is-normal">
+            <label class="label">Quality</label>
+          </div>
+          <div class="field-body">
+            <div class="field is-expanded">
+              <div class="field has-addons">
+                <p class="control is-expanded">
+                  <input id="quality" class="input is-shadowless is-radiusless" type="number" placeholder="Quality">
+                </p>
+                <p class="control">
+                  <a class="button is-static is-shadowless is-radiusless">&nbsp;%</a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- end Quality -->
+
+        <!-- start Width -->
+        <div class="field is-horizontal">
+          <div class="field-label is-normal">
+            <label class="label">Width</label>
+          </div>
+          <div class="field-body">
+            <div class="field is-expanded">
+              <div class="field has-addons">
+                <p class="control is-expanded">
+                  <input id="width" class="input is-shadowless is-radiusless" type="number" placeholder="Width">
+                </p>
+                <p class="control">
+                  <a class="button is-static is-shadowless is-radiusless">px</a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- end Width -->
+
+        <!-- start Height -->
+        <div class="field is-horizontal">
+          <div class="field-label is-normal">
+            <label class="label">Height</label>
+          </div>
+          <div class="field-body">
+            <div class="field is-expanded">
+              <div class="field has-addons">
+                <p class="control is-expanded">
+                  <input id="height" class="input is-shadowless is-radiusless" type="number" placeholder="Height">
+                </p>
+                <p class="control">
+                  <a class="button is-static is-shadowless is-radiusless">px</a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- end Height -->
+
+        <!-- start Download Directory -->
+        <div class="field is-horizontal">
+          <div class="field-label is-normal">
+            <label class="label">Save to</label>
+          </div>
+          <div class="field-body">
+            <div class="field is-expanded">
+              <div class="field">
+                <div class="file">
+                  <label class="file-label ">
+                    <input id="download-dir" class="file-input" type="file" name="resume">
+                    <span class="file-cta is-shadowless is-radiusless">
+                      <span id="downloadPath" class="file-label"></span>
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- end Download Directory -->
+
+        <!-- start Fit -->
+        <div class="field is-horizontal">
+          <div class="field-label is-normal">
+            <label class="label">Resize</label>
+          </div>
+          <div class="field-body">
+            <div class="control">
+              <div class="select is-shadowless is-rounded">
+                <select id="fit">
+                  <option value="">No</option>
+                  <option value="max">Max</option>
+                  <option value="min">Min</option>
+                  <option value="embed">Embed</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- end Fit -->
+
+        <!-- start Format -->
+        <div class="field is-horizontal">
+          <div class="field-label is-normal">
+            <label class="label">Format</label>
+          </div>
+          <div class="field-body">
+            <div class="control">
+              <div class="select is-shadowless is-rounded">
+                <select id="format">
+                  <option value="">Default</option>
+                  <option value="jpeg">jpg</option>
+                  <option value="png">png</option>
+                  <option value="webp">webp</option>
+                  <option value="tiff">tiff</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- end Format -->
+
+        <!-- start Prefix -->
+        <div class="field is-horizontal is-grouped">
+          <div class="field-label is-normal">
+            <label class="label">Prefix</label>
+          </div>
+          <div class="field-body">
+            <div class="field is-expanded">
+              <div class="field">
+                <p class="control">
+                  <input id="prefix" class="input is-shadowless is-radiusless" type="text" placeholder="Add prefix to file name">
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- end Prefix -->
+
+      </form>
+    </div>
+
+    <div class="column">
+      <section class="section is-paddingless">
+        <div id="dropzone" class="dropzone">
+          <p class="dz-message is-size-3 has-text-info">Drop any files here</p>
+          <br />
+          <p class="dz-message">OR</p>
+          <br />
+          <div class="file is-boxed dz-message">
+            <label class="file-label">
+            <input id="fileUploader" class="file-input" type="file" name="file" multiple />
+              <span class="file-cta">
+                <span class="file-icon">
+                  <i class="fa fa-upload has-text-info"></i>
+                </span>
+                <span class="file-label has-text-info">
+                  Choose a file…
+                </span>
+              </span>
+            </label>
+          </div>
+        </div>
+        <div id="progress" class="dropzone is-hidden">
+          <progress class="progress is-link" value="0" max="100"></progress>
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+<script src="./upload.js"></script>
+
+</html>

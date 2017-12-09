@@ -1,0 +1,38 @@
+{
+  "name": "image-resizer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "dependencies": {
+    "bulma": "^0.6.1",
+    "drag-drop": "^2.13.2",
+    "electron": "^1.7.9",
+    "electron-store": "^1.3.0",
+    "font-awesome": "^4.7.0",
+    "jquery": "^3.2.1",
+    "rxjs": "^5.5.3",
+    "sharp": "^0.18.4"
+  },
+  "config": {
+    "libvips": "8.5.9"
+  },
+  "devDependencies": {
+    "electron-rebuild": "^1.6.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "forever": "node ./forever.js",
+    "start": "electron .",
+    "rebuild": "electron-rebuild"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/terryx/image-resizer.git"
+  },
+  "author": "Terry Yuen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/terryx/image-resizer/issues"
+  },
+  "homepage": "https://github.com/terryx/image-resizer#readme"
+}
