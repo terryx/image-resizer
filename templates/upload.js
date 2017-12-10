@@ -42,8 +42,14 @@ $(document).ready(function () {
 
   $('#download-dir').on('click', function () {
     mainProcess.selectDirectory(function (filePaths) {
-      window.localStorage.setItem('downloadPath', filePaths[0])
+      if (filePaths) {
+        $('#downloadPath').text(filePaths[0])
+      }
     })
+  })
+
+  $('#save').on('click', function () {
+    saveSetting()
   })
 })
 
@@ -58,6 +64,8 @@ function renderInputs (setting) {
   $('#width').val(setting.width)
   $('#height').val(setting.height)
   $('#downloadPath').text(setting.downloadPath)
+  $('#fit').val(setting.fit)
+  $('#format').val(setting.format)
   $('#prefix').val(setting.prefix)
 }
 
@@ -65,14 +73,10 @@ function upload (files) {
   const quality = parseInt($('#quality').val()) || 100
   const width = parseInt($('#width').val()) || null
   const height = parseInt($('#height').val()) || null
-  const fit = $('#fit').val()
-  const format = $('#format').val()
+  const fit = $('#fit option:selected')[0].value
+  const format = $('#format option:selected')[0].value
   const outputDir = $('#downloadPath').text()
   const prefix = $('#prefix').val()
-
-  if (!$('#notification').hasClass('is-hidden')) {
-    $('#notification').addClass('is-hidden')
-  }
 
   let finishedFile = 0
   let totalFiles = files.length
@@ -85,7 +89,7 @@ function upload (files) {
 
   return Observable
     .from(files)
-    .skipWhile(file => !supportedFileTypes[file.type])
+    .filter(file => supportedFileTypes[file.type])
     .mergeMap(file => {
       const image = sharp(file.path)
 
@@ -101,15 +105,22 @@ function upload (files) {
         image[fit]()
       }
 
+      const filename = file.name
+      const output = [outputDir, '/', prefix]
+      let nameWithoutExtension = filename.substr(0, filename.lastIndexOf('.'))
+
       if (format === '') {
         image[metadata.format](outputOptions)
+        output.push(filename)
+      } else if (format === 'jpeg') {
+        image.jpeg(outputOptions)
+        output.push(nameWithoutExtension, '.', 'jpg')
       } else {
         image[format](outputOptions)
+        output.push(nameWithoutExtension, '.', format)
       }
 
-      const output = [outputDir, '/', prefix, file.name].join('')
-
-      return Observable.fromPromise(image.toFile(output))
+      return Observable.fromPromise(image.toFile(output.join('')))
     })
     .subscribe({
       next: result => {
@@ -119,8 +130,7 @@ function upload (files) {
       },
       error: err => {
         console.error(err)
-        $('#notification').removeClass('is-hidden')
-        $('#alert').text(err.message)
+        showNotification(err.message, 'error')
       },
       complete: () => {
         $('#dropzone').removeClass('is-hidden')
@@ -129,6 +139,23 @@ function upload (files) {
         // TODO: save form setting
       }
     })
+}
+
+function showNotification (message, status) {
+  if (status === 'success') {
+    $('.notification').addClass('is-success')
+    $('.notification').removeClass('is-danger')
+  } else {
+    $('.notification').addClass('is-danger')
+    $('.notification').removeClass('is-success')
+  }
+
+  $('#alert').text(message)
+  $('#notification')
+    .animate({ 'z-index': 100 })
+    .animate({ height: 'toggle' }, 800)
+    .animate({ display: 'block' })
+    .animate({ height: 'toggle', 'z-index': 0 }, 500)
 }
 
 function showProgressBar (start, end) {
@@ -142,4 +169,20 @@ function showProgressBar (start, end) {
 
   $('.progress').attr('value', start)
   $('.progress').attr('max', end)
+}
+
+function saveSetting () {
+  const data = {
+    quality: $('#quality').val(),
+    width: $('#width').val(),
+    height: $('#height').val(),
+    prefix: $('#prefix').val(),
+    fit: $('#fit option:selected')[0].value,
+    format: $('#format option:selected')[0].value,
+    downloadPath: $('#downloadPath').text()
+  }
+
+  mainProcess.saveSetting(data, function () {
+    showNotification('Setting saved!', 'success')
+  })
 }

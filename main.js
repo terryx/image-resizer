@@ -4,12 +4,12 @@ const path = require('path')
 const Store = require('electron-store')
 const store = new Store()
 
-const { app, BrowserWindow, Menu, dialog } = electron
+const { app, BrowserWindow, dialog } = electron
 
 let mainWindow
 
 const defaultWidth = 960
-const defaultHeight = 600
+const defaultHeight = 540
 
 // Listen for app to be ready
 app.on('ready', function () {
@@ -55,4 +55,10 @@ module.exports.getDefaultSetting = (callback) => {
 
 module.exports.selectDirectory = (callback) => {
   dialog.showOpenDialog(mainWindow, { properties: ['openDirectory', 'createDirectory'] }, callback)
+}
+
+module.exports.saveSetting = (data, callback) => {
+  const result = store.set('setting', data)
+
+  callback(result)
 }
