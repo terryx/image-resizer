@@ -17,13 +17,19 @@
     "libvips": "8.5.9"
   },
   "devDependencies": {
+    "electron-installer-dmg": "^0.2.1",
+    "electron-packager": "^10.1.0",
     "electron-rebuild": "^1.6.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "forever": "node ./forever.js",
     "start": "electron .",
-    "rebuild": "electron-rebuild"
+    "rebuild": "electron-rebuild",
+    "package-mac": "electron-packager . --overwrite --asar=true --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
+    "package-win": "electron-packager . electron-tutorial-app --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Image Resizer\"",
+    "package-linux": "electron-packager . electron-tutorial-app --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/icons/png/icon.png --prune=true --out=release-builds",
+    "dmg": "electron-installer-dmg release-builds/kms-encyptor-darwin-x64/kms-encyptor.app kms-encryptor --overwrite"
   },
   "repository": {
     "type": "git",

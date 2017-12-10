@@ -16,7 +16,9 @@ app.on('ready', function () {
   // Create new mainWindow
   mainWindow = new BrowserWindow({
     width: defaultWidth,
-    height: defaultHeight
+    height: defaultHeight,
+    minWidth: defaultWidth,
+    minHeight: defaultHeight
   })
 
   // Load html into mainWindow
